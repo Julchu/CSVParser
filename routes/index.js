@@ -2,7 +2,6 @@ let express = require('express');
 let router = express.Router();
 let csv = require('csv-parser');
 let fs = require('fs');
-let { promisify } = require('util');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -80,3 +79,14 @@ router.post("/", async (req, res, next) => {
 });
 
 module.exports = router;
+
+// router.get('/', async (req, res, next) => {	
+// 	let productInfo = await getJSONInfo("productInfo.json");
+// 	console.log(productInfo);
+	
+// 	if (productInfo) {
+// 		res.render('index', { title: 'Express', productInfo: productInfo});
+// 	} else {
+// 		res.render("index", { title: "Express"});
+// 	}
+// });
