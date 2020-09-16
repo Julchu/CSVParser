@@ -17,11 +17,9 @@ router.get('/', function(req, res, next) {
 	} else {
 		res.render("index", { title: "Express"});
 	}
-	
 });
 
 router.post("/", async (req, res, next) => {
-
 	// Sets path of uploaded files
 	let path = __dirname + "/../public/uploads/";
 
@@ -32,7 +30,17 @@ router.post("/", async (req, res, next) => {
 			if (!fileNames.length) {
 				console.log("Directory is empty");
 			} else {
-				let productInfo = {};
+				let productInfo = {
+					"test": 0
+				};
+
+				// Clears JSON file
+				fs.writeFile('productInfo.json', JSON.stringify(productInfo), 'utf8', (err) => {
+					if (err) {
+						console.log(err);
+					}
+				});
+
 				// Reads files in directory	
 				fileNames.forEach(fileName => {
 					// Reads CSV file
@@ -45,7 +53,7 @@ router.post("/", async (req, res, next) => {
 						for await (eachProduct of productData) {
 							if (eachProduct) {
 								eachProduct = eachProduct.split(" x ");
-
+								
 								if (productInfo[eachProduct[1]]) {
 									productInfo[eachProduct[1]] += parseInt(eachProduct[0]);
 								} else {
@@ -55,8 +63,9 @@ router.post("/", async (req, res, next) => {
 												
 						}
 
+						console.log(productInfo);
 						// Writes to JSON file
-						fs.writeFile('productInfo.json', JSON.stringify(productInfo), 'utf8', (err) => {
+						fs.writeFileSync('productInfo.json', JSON.stringify(productInfo), 'utf8', (err) => {
 							if (err) {
 								console.log(err);
 							}
