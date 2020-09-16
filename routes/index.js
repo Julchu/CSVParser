@@ -10,8 +10,6 @@ router.get('/', function(req, res, next) {
 	
 	let productInfo = JSON.parse(data);
 	
-	// console.log(productInfo);
-	// res.render("index", {title: "test"});
 	if (productInfo) {
 		res.render('index', { title: 'Express', productInfo: productInfo});
 	} else {
@@ -30,16 +28,7 @@ router.post("/", async (req, res, next) => {
 			if (!fileNames.length) {
 				console.log("Directory is empty");
 			} else {
-				let productInfo = {
-					"test": 0
-				};
-
-				// Clears JSON file
-				fs.writeFile('productInfo.json', JSON.stringify(productInfo), 'utf8', (err) => {
-					if (err) {
-						console.log(err);
-					}
-				});
+				let productInfo = {};
 
 				// Reads files in directory	
 				fileNames.forEach(fileName => {
@@ -63,7 +52,6 @@ router.post("/", async (req, res, next) => {
 												
 						}
 
-						console.log(productInfo);
 						// Writes to JSON file
 						fs.writeFileSync('productInfo.json', JSON.stringify(productInfo), 'utf8', (err) => {
 							if (err) {
@@ -76,6 +64,7 @@ router.post("/", async (req, res, next) => {
 					.on('end', () => {
 						console.log('CSV file successfully processed');
 					});
+					
 					// Deletes file
 					try {
 						fs.unlinkSync(path + fileName)
@@ -87,7 +76,6 @@ router.post("/", async (req, res, next) => {
 			}
 		}
 	});
-
 	res.redirect('/');
 });
 
