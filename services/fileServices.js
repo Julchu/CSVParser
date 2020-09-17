@@ -41,7 +41,7 @@ let parseCSVInfo = async (path, fileName, productInfo, jsonDirectory) => {
 		});
 	} catch (err) {
 		console.error(err);
-		console.log("Error parseCSVInfo");
+		console.log("Error reading file in parseCSVInfo");
 	}
 }
 
