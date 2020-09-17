@@ -53,7 +53,12 @@ let getCSVInfo = async (path, jsonDirectory) => {
 		
 		// Reads files in directory	
 		fileNames.forEach(fileName => {
-			parseCSVInfo(path, fileName, productInfo, jsonDirectory);
+			try {
+				parseCSVInfo(path, fileName, productInfo, jsonDirectory);
+			} catch (err) {
+				console.error(err);
+				console.log("Failed to parse file in getCSVInfo");
+			}
 
 			// Deletes file
 			try {

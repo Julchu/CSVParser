@@ -1,102 +1,71 @@
-// ************************ Drag and drop ***************** //
-let dropArea = document.getElementById("drop-area");
+"use strict";
 
-// Prevent default drag behaviors
-;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-	dropArea.addEventListener(eventName, preventDefaults, false);
-	document.body.addEventListener(eventName, preventDefaults, false);
-});
+$(document).ready(async () => {	
+	// ************************ Drag and drop ***************** //
+	let dropArea = document.getElementById("dropArea");
 
-// Highlight drop area when item is dragged over it
-;['dragenter', 'dragover'].forEach(eventName => {
-	dropArea.addEventListener(eventName, highlight, false);
-});
+	let fileUpload = document.createElement("input");
+	fileUpload.setAttribute("id", "fileUpload");
+	fileUpload.setAttribute("type", "file");
+	fileUpload.setAttribute("name", "Upload Document");
+	fileUpload.setAttribute("onchange", "form.submit()");
+	fileUpload.setAttribute("value", "document");
+	fileUpload.setAttribute("accept", ".csv");
 
-;['dragleave', 'drop'].forEach(eventName => {
-	dropArea.addEventListener(eventName, unhighlight, false);
-});
+	let uploadForm = document.createElement("form");
+	uploadForm.setAttribute("id", "uploadForm");
+	uploadForm.setAttribute("method", "POST");
+	uploadForm.setAttribute("action", "/");
+	uploadForm.setAttribute("enctype", "multipart/form-data");
 
-// Handle dropped files
-dropArea.addEventListener('drop', handleDrop, false);
+	uploadForm.append(fileUpload);
+	document.body.appendChild(uploadForm);
 
-function preventDefaults (e) {
-	e.preventDefault();
-	e.stopPropagation();
-};
+	// Prevent default drag behaviors
+	['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+		document.body.addEventListener(eventName, preventDefaults, false);
+		document.body.addEventListener(eventName, preventDefaults, false);
+	});
 
-function highlight(e) {
-	dropArea.classList.add('highlight');
-};
+	// Highlight drop area when item is dragged over it
+	['dragenter', 'dragover'].forEach(eventName => {
+		document.body.addEventListener(eventName, highlight, false);
+	});
 
-function unhighlight(e) {
-	dropArea.classList.remove('active');
-};
+	['dragleave', 'drop'].forEach(eventName => {
+		document.body.addEventListener(eventName, unhighlight, false);
+	});
 
-function handleDrop(e) {
-	var dt = e.dataTransfer;
-	var files = dt.files;
+	// Handle dropped files
+	document.body.addEventListener('drop', handleDrop, false);
+	document.body.addEventListener("click", handleClick);
 
-	handleFiles(files);
-};
-
-let uploadProgress = []
-let progressBar = document.getElementById('progress-bar')
-
-function initializeProgress(numFiles) {
-	progressBar.value = 0;
-	uploadProgress = [];
-
-	for(let i = numFiles; i > 0; i--) {
-		uploadProgress.push(0);
+	function handleClick(e) {
+		fileUpload.click();
 	}
-};
 
-function updateProgress(fileNumber, percent) {
-	uploadProgress[fileNumber] = percent;
-	let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length;
-	console.debug('update', fileNumber, percent, total);
-	progressBar.value = total;
-};
+	function preventDefaults (e) {
+		e.preventDefault();
+		e.stopPropagation();
+	};
 
-function handleFiles(files) {
-	files = [...files];
-	initializeProgress(files.length);
-	files.forEach(uploadFile);
-	files.forEach(previewFile);
-};
+	function highlight(e) {
+		dropArea.classList.add('highlight');
+	};
 
-function previewFile(file) {
-	let reader = new FileReader();
-	reader.readAsDataURL(file);
-	reader.onloadend = function() {
-		let img = document.createElement('img');
-		img.src = reader.result;
-		document.getElementById('gallery').appendChild(img);
-	}
-};
+	function unhighlight(e) {
+		dropArea.classList.remove('highlight');
+	};
 
-function uploadFile(file, i) {
-	var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload';
-	var xhr = new XMLHttpRequest();
-	var formData = new FormData();
-	xhr.open('POST', url, true);
-	xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	function handleDrop(e) {
+		var dt = e.dataTransfer;
+		var files = dt.files;
 
-	// Update progress (can be used to show progress indicator)
-	xhr.upload.addEventListener("progress", function(e) {
-		updateProgress(i, (e.loaded * 100.0 / e.total) || 100);
-	})
-
-	xhr.addEventListener('readystatechange', function(e) {
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			updateProgress(i, 100) // <- Add this;
+		fileUpload.files = files;
+		
+		// Checks files for Excel files
+		if (fileUpload.files[0].type === "application/vnd.ms-excel") {
+			fileUpload.form.submit();	
 		}
-		else if (xhr.readyState == 4 && xhr.status != 200) {
-			// Error. Inform the user
-		}
-	})
-
-	formData.append('upload_preset', 'ujpu6gyk');
-	formData.append('file', file);
-	xhr.send(formData);
-};
+	};
+});

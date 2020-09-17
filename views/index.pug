@@ -1,19 +1,18 @@
 extends layout
 
-block content
-	h1 Single File Upload
-	
-	form(method='POST', action='/', enctype='multipart/form-data')
-		label Select your profile picture:
-		input(type='file', name='document')
-		input(type='submit', name='btn_upload_profile_pic', value='Upload')
+block scripts
+	script(type='text/javascript', src="/javascripts/fileDropper.js")
 
-	table
-		tr
-			th Quantity
-			th Product Name
-		tbody
-			each productQuantity, productName in productInfo
-				tr
-					td #{productQuantity}
-					td #{productName}
+block content
+	#dropArea
+		h1 Food Parser
+
+		table.table.table-hover.center
+			tr
+				th Quantity
+				th Product Name
+			tbody
+				each productQuantity, productName in productInfo
+					tr
+						td #{productQuantity}
+						td #{productName}

@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var multer = require("multer");
+let favicon = require('serve-favicon');
 
 var indexRouter = require('./routes/index');
 
@@ -13,7 +14,12 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+// Favicon
+app.use(favicon(path.join(__dirname,'public','images','favicon.ico')));
+
+// File upload
 app.use(multer({dest:'public/uploads/'}).any(""));
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
