@@ -7,27 +7,28 @@ let fs = require('fs');
 let { getJSONInfo, getCSVInfo } = require("../services/fileServices");
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-	// let productInfo = getJSONInfo("productInfo.json");
-
-	let data = fs.readFileSync("productInfo.json", "utf8", (error, data) => {
-		JSON.parse(data);
-	});
-	
-	let productInfo = JSON.parse(data);
+router.get('/', async (req, res, next) => {
+	let jsonDirectory = "productInfo.json";
+	let productInfo = {};
+	try {
+		productInfo = await getJSONInfo(jsonDirectory);
+	} catch (err) {
+		console.log(err);
+	}
 	
 	if (productInfo) {
-		res.render('index', { title: 'Express', productInfo: productInfo});
+		res.render('index', { title: 'Food Parser', productInfo: productInfo});
 	} else {
-		res.render("index", { title: "Express"});
+		res.render("index", { title: "Food Parser"});
 	}
 });
 
 router.post("/", async (req, res, next) => {
 	// Sets path of uploaded files
 	let path = __dirname + "/../public/uploads/";
+	let jsonDirectory = "productInfo.json";
 
-	getCSVInfo(path);
+	await getCSVInfo(path, jsonDirectory);
 
 	// fs.readdir(path, async function(err, fileNames) {
 	// 	if (err) {
